@@ -1,7 +1,6 @@
 
 class Board:
-	def __init__(self, size):
-		self.columnIndex = [x for x in range(1, size+1)]		# This is for displaying the column numbers only
+	def __init__(self, size):	# This is for displaying the column numbers only
 		self.repr = []
 		for i in range(size):	# Adds rows to our matrix
 			self.repr.append([])
@@ -22,12 +21,9 @@ class Board:
 	def __str__(self):
 		""" Prints the board """
 		display = "  "
-		for number in self.columnIndex:
-			display += str(number)+" "		# Adds column numbers
 		display += "\n"
 		rowNumber = 1
 		for row in self.repr:
-			display += str(rowNumber)+" "	# Adds row numbers
 			for piece in row:
 				display += piece+" "
 			display += "\n"
