@@ -10,14 +10,14 @@ class Board:
 			for j in range(size):
 				if i%2 == 0:
 					if j%2 == 0:
-						self.repr[i].append("x")
+						self.repr[i].append("B")
 					else:
-						self.repr[i].append("o")
+						self.repr[i].append("W")
 				else:
 					if j%2 == 0:
-						self.repr[i].append("o") 
+						self.repr[i].append("W") 
 					else:
-						self.repr[i].append("x")
+						self.repr[i].append("B")
 
 	def __str__(self):
 		""" Prints the board """
