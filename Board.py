@@ -1,48 +1,51 @@
-
 class Board:
-        def __init__(self, size):
-                self.board1 = []
-                for i in range(size):	#rows
-                        self.board1.append([])
-
+	def __init__(self, size):
+		self.columnIndex = [x for x in range(1, size+1)]		# This is for displaying the column numbers only
+		self.repr = []
+		for i in range(size):	# Adds rows to our matrix
+			self.repr.append([])
+		# Next few lines fill the board with the pieces
 		for i in range(size):		
 			for j in range(size):
 				if i%2 == 0:
 					if j%2 == 0:
-                                                self.board1[i].append("B")
+						self.repr[i].append("B")
 					else:
-                                                self.board1[i].append("W")
+						self.repr[i].append("W")
 				else:
 					if j%2 == 0:
-                                                self.board1[i].append("W")
+						self.repr[i].append("W") 
 					else:
-                                                self.board1[i].append("B")
+						self.repr[i].append("B")
 
 	def __str__(self):
-
+		""" Prints the board """
 		display = "  "
+		for number in self.columnIndex:
+			display += str(number)+" "		# Adds column numbers
 		display += "\n"
 		rowNumber = 1
-                for row in self.board1:
+		for row in self.repr:
+			display += str(rowNumber)+" "	# Adds row numbers
 			for piece in row:
 				display += piece+" "
 			display += "\n"
 			rowNumber += 1
 		return display
 
-        def movePiece(self, firstPos, nextPos):
+	def movePiece(self, from_pos, to_pos):		# Assuming from_pos and to_pos are coordinate tuples
+		""" Modifies the game board when moving pieces """
+		moved_piece = self.repr[from_pos[0]][from_pos[1]]	# Saves the type of the piece we are moving (whether it is "X" or "O")
+		self.repr[from_pos[0]][from_pos[1]] = "."
 
-                curPiece = self.board1[firstPos[0]][firstPos[1]]
-                self.board1[firstPos[0]][firstPos[1]] = "."
-
-                x_range = sorted([firstPos[0], nextPos[0]+1])
-                y_range = sorted([firstPos[1], nextPos[1]+1])
-                for x in range(*x_range):
+		x_range = sorted([from_pos[0], to_pos[0]+1])
+		y_range = sorted([from_pos[1], to_pos[1]+1])
+		for x in range(*x_range):		# In order to iterate between the values of the from and to positions
 			for y in range(*y_range):
+				# Deletes every piece between the moving piece's starting and ending positions
+				self.repr[x][y] = "."
+		self.repr[to_pos[0]][to_pos[1]] = moved_piece	# Places the piece in it's final position
 
-                                self.board1[x][y] = "."
-                self.board1[nextPos[0]][nextPos[1]] = curPiece
-
-        def removePiece(self, pos):
-
-                self.board1[pos[0]][pos[1]] = "."
+	def removePiece(self, pos):		# pos should be a coordinate tuple
+		""" Modifies the board by removing a piece at specified coordinate """
+		self.repr[pos[0]][pos[1]] = "."
