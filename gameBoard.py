@@ -54,5 +54,4 @@ class Board:
 				display += piece+" "
 			display += "\n"
 			rowNumber += 1
-
 		return display
