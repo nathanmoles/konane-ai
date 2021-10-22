@@ -179,6 +179,9 @@ class Game:
                         self.endgame = 1
                         print "Player", self.player_symbol[self.current_player], "loses!"
 
+
+
+
         @staticmethod
         def north_move(pos):
                 return (pos,(pos[0]-2,pos[1]))
