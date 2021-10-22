@@ -9,7 +9,8 @@ minimax_calls = 0
 total_branches    = 0
 cutoffs           = 0
 
-def minimax(game_state, depth_bound):
+def max(game_state, depth_bound):
+
 	return
 
 
@@ -31,14 +32,14 @@ def alphabeta(game_state, alpha, beta, depth_bound):
 			total_branches += 1
 			# player_move just gets discarded
 			bv, player_move = alphabeta(successor_game_state, alpha, beta, depth_bound+1)
+			
+			if alpha >= beta:
+				cutoffs +=1
+				return (beta, bestmove)
 
 			if bv > alpha:
 				alpha = bv
 				bestmove = successor_game_state.last_move_made
-
-			if alpha >= beta:
-				cutoffs +=1
-				return (beta, bestmove)
 
 		return (alpha, bestmove)
 	else: 	# i.e looking at player turn (min node)
@@ -50,13 +51,14 @@ def alphabeta(game_state, alpha, beta, depth_bound):
 			# computer_move is not relevant, we just need to return both for later
 			bv, computer_move = alphabeta(successor_game_state, alpha, beta, depth_bound+1)
 
+			if beta <= alpha:
+				cutoffs +=1
+				return (alpha, bestmove)
+				
 			if bv < beta:
 				beta = bv
 				bestmove = successor_game_state.last_move_made
 
-			if beta <= alpha:
-				cutoffs +=1
-				return (alpha, bestmove)
 		return (beta, bestmove)
 
 class Game:
