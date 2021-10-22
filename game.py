@@ -4,10 +4,10 @@ import random
 import time
 
 static_eval_count = 0
-alphabeta_calls     = 0
+alphabeta_calls = 0
 minimax_calls = 0
-total_branches    = 0
-cutoffs           = 0
+total_branches = 0
+cutoffs = 0
 
 def max(game_state, depth_bound):
 
@@ -79,10 +79,7 @@ class Game:
 
 				if self.board.repr[row][col] == self.player_symbol[current_player]:
 					position  = (row,col)
-					move_fn_list = [self.north_move,
-								 self.east_move,
-								 self.south_move,
-								 self.west_move]
+                                        move_fn_list = [self.north_move, self.east_move, self.south_move, self.west_move]
 
 					for move_fn in move_fn_list:
 						move = move_fn(position)
@@ -193,20 +190,27 @@ class Game:
 	def north_move(pos):
 		return (pos,(pos[0]-2,pos[1]))
 
+
 	@staticmethod
 	def east_move(pos):
 		return (pos,(pos[0],pos[1]+2))
 
+
+
 	@staticmethod
 	def south_move(pos):
 		return (pos,(pos[0]+2,pos[1]))
+
 
 	@staticmethod
 	def west_move(pos):
 		return (pos,(pos[0],pos[1]-2))
 
 	def static_evaluation(self):
+
+
 		my_moves = self.get_legal_moves(0)
+
 		opponent_moves = self.get_legal_moves(1)
 
 		if opponent_moves == 0:
@@ -234,7 +238,7 @@ def test_game(game_state):
 if __name__ == '__main__':
 	start = time.time()
 	test_game(Game(8,Board(8)))
-	print("GAME TOOK", time.time() - start, "SECONDS")
-	print("NUM STATIC EVALS:", static_eval_count)
-	print("AVG BRANCHING FACTOR:", total_branches/(alphabeta_calls+0.0))
-	print("NUM CUTOFFS", cutoffs)
+        print("Time taken: ", time.time() - start, "Seconds")
+        print("Static Evaluations:", static_eval_count)
+        print("Average Branching Factor::", total_branches/(alphabeta_calls+0.0))
+        print("Number of Cutoffs", cutoffs)
