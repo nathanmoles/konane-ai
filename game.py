@@ -1,4 +1,4 @@
-from board import Board
+from gameBoard import Board
 import copy
 import random
 import time
