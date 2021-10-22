@@ -10,7 +10,6 @@ total_branches    = 0
 cutoffs           = 0
 
 def minimax(game_state, depth_bound):
-
 	return
 
 
@@ -176,7 +175,6 @@ class Game:
 			print("Player", self.player_symbol[self.current_player], "loses!")
 
 	def random_turn(self):
-
 		if len(self.get_legal_moves(self.current_player)) != 0:
 			random_move =  random.choice(self.get_legal_moves(self.current_player))
 			self.board.movePiece(random_move[0], random_move[1])
@@ -189,11 +187,6 @@ class Game:
 			self.endgame = 1
 			print("Player", self.player_symbol[self.current_player], "loses!")
 
-<<<<<<< Updated upstream
-=======
-		
-
->>>>>>> Stashed changes
 	@staticmethod
 	def north_move(pos):
 		return (pos,(pos[0]-2,pos[1]))
