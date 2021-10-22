@@ -93,7 +93,7 @@ class Game:
 		if ending_pos[0] not in range(self.board_size) or ending_pos[1] not in range(self.board_size):	# Discard any generated moves that fall off of the board
 			return False 
 		if self.board.repr[starting_pos[0]][starting_pos[1]]!=self.player_symbol[current_player]:
-			print "this should never trigger and is redundant"
+			print ("this should never trigger and is redundant")
 			return False
 		if self.board.repr[ending_pos[0]][ending_pos[1]]!= '.':	# Check that landing spot is empty
 			return False
@@ -111,13 +111,13 @@ class Game:
 			successors.append(Game(self.board_size, boardCopy, 1-self.current_player, move))
 		for s in successors:
 			if False:
-				print s.board
+				print (s.board)
 		return successors
 
 	def player_turn(self):
 		try:
 			legal_moves = self.get_legal_moves(self.current_player)
-			print legal_moves
+			print (legal_moves)
 			if len(legal_moves) != 0:
 				is_valid_input = False
 				while is_valid_input == False:
@@ -130,11 +130,11 @@ class Game:
 				self.current_player = 1 - self.current_player
 			else:
 				self.endgame = 1
-				print "Player", self.player_symbol[self.current_player], "loses!"
+				print("Player", self.player_symbol[self.current_player], "loses!")
 		except KeyboardInterrupt:
 			raise
 		except:
-			print "You messed up, you dingus"
+			print("You messed up, you dingus")
 			self.player_turn()
 
 	def computer_turn(self):
@@ -142,24 +142,24 @@ class Game:
 		if len(self.get_legal_moves(self.current_player)) != 0:
 			computer_move = minimax(self, float("-inf"), float("inf"), 0)
 			computer_move = computer_move[1]
-			print "FROM BOARD:"
-			print self.board
+			print("FROM BOARD:")
+			print(self.board)
 			if computer_move is not None:
 				self.board.movePiece(computer_move[0], computer_move[1])
 				print(self.board)
-				print "Made move: ", ((computer_move[0][0]+1, computer_move[0][1]+1), (computer_move[1][0]+1, computer_move[1][1]+1))
+				print("Made move: ", ((computer_move[0][0]+1, computer_move[0][1]+1), (computer_move[1][0]+1, computer_move[1][1]+1)))
 				self.last_move_made = computer_move
 				self.current_player = 1 - self.current_player
 			else:
 				random_move =  random.choice(self.get_legal_moves(self.current_player))
 				self.board.movePiece(random_move[0], random_move[1])
 				print(self.board)
-				print "Made move: ", ((random_move[0][0]+1, random_move[0][1]+1), (random_move[1][0]+1, random_move[1][1]+1))	# to present the computer's move nicely to player
+				print("Made move: ", ((random_move[0][0]+1, random_move[0][1]+1), (random_move[1][0]+1, random_move[1][1]+1)))	# to present the computer's move nicely to player
 				self.last_move_made = computer_move
 				self.current_player = 1 - self.current_player
 		else:
 			self.endgame = 1
-			print "Player", self.player_symbol[self.current_player], "loses!"
+			print("Player", self.player_symbol[self.current_player], "loses!")
 
 	@staticmethod
 	def north_move(pos):
@@ -187,10 +187,10 @@ class Game:
 		return len(my_moves) - len(opponent_moves)
 
 def play_game(game_state):
-	print game_state.board
+	print(game_state.board)
 	to_remove = input("x remove a piece: ")
 	game_state.board.removePiece((to_remove[0]-1,to_remove[1]-1))
-	print game_state.board
+	print(game_state.board)
 	to_remove = input("o remove a piece: ")
 	game_state.board.removePiece((to_remove[0]-1,to_remove[1]-1))
 	while game_state.endgame != 1:
@@ -201,9 +201,9 @@ def play_game(game_state):
 
 def test_game(game_state):
 	game_state.board.removePiece((3,3))
-	print game_state.board
+	print(game_state.board)
 	game_state.board.removePiece((3,2))
-	print game_state.board
+	print(game_state.board)
 	while game_state.endgame != 1:
 		if game_state.current_player == 0:
 			game_state.computer_turn()
@@ -214,7 +214,7 @@ def test_game(game_state):
 if __name__ == '__main__':
 	start = time.time()
 	test_game(Game(8,Board(8)))
-	print "GAME TOOK", time.time() - start, "SECONDS"
-	print "NUM STATIC EVALS:", static_eval_count
-	print "AVG BRANCHING FACTOR:", total_branches/(minimax_calls+0.0)
-	print "NUM CUTOFFS", cutoffs
+	print("GAME TOOK", time.time() - start, "SECONDS")
+	print("NUM STATIC EVALS:", static_eval_count)
+	print("AVG BRANCHING FACTOR:", total_branches/(minimax_calls+0.0))
+	print("NUM CUTOFFS", cutoffs)
