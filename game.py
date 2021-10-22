@@ -4,12 +4,18 @@ import random
 import time
 
 static_eval_count = 0
-minimax_calls     = 0
+alphabeta_calls     = 0
+minimax_calls = 0
 total_branches    = 0
 cutoffs           = 0
 
-def minimax(game_state, alpha, beta, depth_bound):
-	global minimax_calls
+def minimax(game_state, depth_bound):
+
+	return
+
+
+def alphabeta(game_state, alpha, beta, depth_bound):
+	global alphabeta_calls
 	global total_branches
 	global static_eval_count
 	global cutoffs
@@ -17,15 +23,15 @@ def minimax(game_state, alpha, beta, depth_bound):
 	if depth_bound == 4:
 		static_eval_count += 1
 		return (game_state.static_evaluation(), None) 	# it is irrelevant what we return int second slot
-
+		
 	elif game_state.current_player == 0:	# i.e is AI turn (max node)
 		bestmove = None
-		minimax_calls += 1
+		alphabeta_calls += 1
 
 		for successor_game_state in game_state.generate_successors():
 			total_branches += 1
 			# player_move just gets discarded
-			bv, player_move = minimax(successor_game_state, alpha, beta, depth_bound+1)
+			bv, player_move = alphabeta(successor_game_state, alpha, beta, depth_bound+1)
 
 			if bv > alpha:
 				alpha = bv
@@ -38,12 +44,12 @@ def minimax(game_state, alpha, beta, depth_bound):
 		return (alpha, bestmove)
 	else: 	# i.e looking at player turn (min node)
 		bestmove = None
-		minimax_calls += 1
+		alphabeta_calls += 1
 
 		for successor_game_state in game_state.generate_successors():
 			total_branches += 1
 			# computer_move is not relevant, we just need to return both for later
-			bv, computer_move = minimax(successor_game_state, alpha, beta, depth_bound+1)
+			bv, computer_move = alphabeta(successor_game_state, alpha, beta, depth_bound+1)
 
 			if bv < beta:
 				beta = bv
@@ -140,10 +146,10 @@ class Game:
 		return successors
 
 	def computer_turn(self):
-		global minimax_calls
+		global alphabeta_calls
 
 		if len(self.get_legal_moves(self.current_player)) != 0:
-			computer_move = minimax(self, float("-inf"), float("inf"), 0)
+			computer_move = alphabeta(self, float("-inf"), float("inf"), 0)
 			computer_move = computer_move[1]
 
 			print("FROM BOARD:")
@@ -151,8 +157,8 @@ class Game:
 
 			if computer_move is not None:
 				self.board.movePiece(computer_move[0], computer_move[1])
+				
 				print(self.board)
-				print("Made move: ", ((computer_move[0][0]+1, computer_move[0][1]+1), (computer_move[1][0]+1, computer_move[1][1]+1)))
 
 				self.last_move_made = computer_move
 				self.current_player = 1 - self.current_player
@@ -162,8 +168,7 @@ class Game:
 				self.board.movePiece(random_move[0], random_move[1])
 
 				print(self.board)
-				print("Made move: ", ((random_move[0][0]+1, random_move[0][1]+1), (random_move[1][0]+1, random_move[1][1]+1)))	# to present the computer's move nicely to player
-				
+
 				self.last_move_made = computer_move
 				self.current_player = 1 - self.current_player
 		else:
@@ -177,8 +182,7 @@ class Game:
 			self.board.movePiece(random_move[0], random_move[1])
 
 			print(self.board)
-			print("Made move: ", ((random_move[0][0]+1, random_move[0][1]+1), (random_move[1][0]+1, random_move[1][1]+1)))	# to present the computer's move nicely to player
-			
+
 			self.last_move_made = random_move
 			self.current_player = 1 - self.current_player
 		else:
@@ -213,21 +217,6 @@ class Game:
 
 		return len(my_moves) - len(opponent_moves)
 
-def play_game(game_state):
-	print(game_state.board)
-	to_remove = input("x remove a piece: ")
-	game_state.board.removePiece((to_remove[0]-1,to_remove[1]-1))
-
-	print(game_state.board)
-	to_remove = input("o remove a piece: ")
-	game_state.board.removePiece((to_remove[0]-1,to_remove[1]-1))
-
-	while game_state.endgame != 1:
-		if game_state.current_player == 0:
-			game_state.computer_turn()
-		else:
-			game_state.computer_turn()
-
 def test_game(game_state):
 	game_state.board.removePiece((3,3))
 	print(game_state.board)
@@ -247,5 +236,5 @@ if __name__ == '__main__':
 	test_game(Game(8,Board(8)))
 	print("GAME TOOK", time.time() - start, "SECONDS")
 	print("NUM STATIC EVALS:", static_eval_count)
-	print("AVG BRANCHING FACTOR:", total_branches/(minimax_calls+0.0))
+	print("AVG BRANCHING FACTOR:", total_branches/(alphabeta_calls+0.0))
 	print("NUM CUTOFFS", cutoffs)
