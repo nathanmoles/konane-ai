@@ -2,6 +2,7 @@ from gameBoard import Board
 import copy
 import random
 import time
+import sys
 
 static_eval_count = 0
 alphabeta_calls     = 0
@@ -9,8 +10,46 @@ minimax_calls = 0
 total_branches    = 0
 cutoffs           = 0
 
-def max(game_state, depth_bound):
+def minimax(game_state, depth_bound):
+	global minimax_calls
+	global total_branches
+	global static_eval_count
+	global cutoffs
 
+	if depth_bound == 3:
+		static_eval_count += 1
+		return (game_state.static_evaluation(), None) 	# it is irrelevant what we return int second slot
+		
+	if game_state.current_player == 0:	# i.e is AI turn (max node)
+		bestmove = None
+		minimax_calls += 1
+		value = float('-inf')
+
+		for successor_game_state in game_state.generate_successors():
+			total_branches += 1
+			# player_move just gets discarded
+			newVal, move = minimax(successor_game_state, depth_bound+1)
+			
+			if newVal > value:
+				value = newVal
+				bestmove = successor_game_state.last_move_made
+		return (value, bestmove)
+	else: 	# i.e looking at player turn (min node)
+		bestmove = None
+		minimax_calls += 1
+
+		value = float('inf')
+
+		for successor_game_state in game_state.generate_successors():
+			total_branches += 1
+			# player_move just gets discarded
+			newVal, move = minimax(successor_game_state, depth_bound+1)
+			
+			if newVal < value:
+				value = newVal
+				bestmove = successor_game_state.last_move_made
+
+		return (value, bestmove)
 	return
 
 
@@ -54,7 +93,7 @@ def alphabeta(game_state, alpha, beta, depth_bound):
 			if beta <= alpha:
 				cutoffs +=1
 				return (alpha, bestmove)
-				
+
 			if bv < beta:
 				beta = bv
 				bestmove = successor_game_state.last_move_made
@@ -146,11 +185,41 @@ class Game:
 				print (s.board)
 		return successors
 
-	def computer_turn(self):
+	def alphabeta_turn(self):
 		global alphabeta_calls
 
 		if len(self.get_legal_moves(self.current_player)) != 0:
 			computer_move = alphabeta(self, float("-inf"), float("inf"), 0)
+			computer_move = computer_move[1]
+
+			print("FROM BOARD:")
+			print(self.board)
+
+			if computer_move is not None:
+				self.board.movePiece(computer_move[0], computer_move[1])
+				
+				print(self.board)
+
+				self.last_move_made = computer_move
+				self.current_player = 1 - self.current_player
+
+			else:
+				random_move =  random.choice(self.get_legal_moves(self.current_player))
+				self.board.movePiece(random_move[0], random_move[1])
+
+				print(self.board)
+
+				self.last_move_made = computer_move
+				self.current_player = 1 - self.current_player
+		else:
+			self.endgame = 1
+			print("Player", self.player_symbol[self.current_player], "loses!")
+
+	def minimax_turn(self):
+		global minimax_calls
+
+		if len(self.get_legal_moves(self.current_player)) != 0:
+			computer_move = minimax(self,  0)
 			computer_move = computer_move[1]
 
 			print("FROM BOARD:")
@@ -226,7 +295,7 @@ def test_game(game_state):
 
 	while game_state.endgame != 1:
 		if game_state.current_player == 0:
-			game_state.computer_turn()
+			game_state.minimax_turn()
 		else:
 			game_state.random_turn()
 
@@ -236,5 +305,5 @@ if __name__ == '__main__':
 	test_game(Game(8,Board(8)))
 	print("GAME TOOK", time.time() - start, "SECONDS")
 	print("NUM STATIC EVALS:", static_eval_count)
-	print("AVG BRANCHING FACTOR:", total_branches/(alphabeta_calls+0.0))
+	print("AVG BRANCHING FACTOR:", total_branches/(minimax_calls+0.0))
 	print("NUM CUTOFFS", cutoffs)
