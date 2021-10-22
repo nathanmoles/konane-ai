@@ -1,21 +1,21 @@
 class Board:
 	def __init__(self, size):
-                print "starting game"
+		print("starting game")
 
-                self.columnIndex = [x for x in range(1, size+1)]		# This is for displaying the column numbers only
-                self.repr = []
-                cur = 0
-                for i in range(size):	# Adds rows to our matrix
+		self.columnIndex = [x for x in range(1, size+1)]		# This is for displaying the column numbers only
+		self.repr = []
+		cur = 0
+		for i in range(size):	# Adds rows to our matrix
 			self.repr.append([])
 		# Next few lines fill the board with the pieces
-                for i in range(size):
-                    for j in range(size):
-                        cur = 0
-                        cur = (i+j)%2
-                        if cur == 0:
-                            self.repr[i].append("B")
-                        else:
-                            self.repr[i].append("W")
+		for i in range(size):
+			for j in range(size):
+				cur = 0
+				cur = (i+j)%2
+				if cur == 0:
+					self.repr[i].append("B")
+				else:
+					self.repr[i].append("W")
 
 
 	def movePiece(self, from_pos, to_pos):		# Assuming from_pos and to_pos are coordinate tuples
@@ -38,22 +38,21 @@ class Board:
                 self.repr[pos[0]][pos[1]] = "."
 
 
+	def __str__(self):
+		""" Prints the board """
+		display = "  "
 
-        def __str__(self):
-            """ Prints the board """
-            display = "  "
+		for number in self.columnIndex:
+			display += str(number)+" "		# Adds column numbers
+		display += "\n"
+		rowNumber = 1
 
-            for number in self.columnIndex:
-                display += str(number)+" "		# Adds column numbers
-            display += "\n"
-            rowNumber = 1
+		for row in self.repr:
+			display += str(rowNumber)+" "	# Adds row numbers
 
-            for row in self.repr:
-                display += str(rowNumber)+" "	# Adds row numbers
+			for piece in row:
+				display += piece+" "
+			display += "\n"
+			rowNumber += 1
 
-                for piece in row:
-                    display += piece+" "
-                display += "\n"
-                rowNumber += 1
-
-            return display
+		return display
