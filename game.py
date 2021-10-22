@@ -15,9 +15,9 @@ def minimax(game_state, alpha, beta, depth_bound):
 	global cutoffs
 
 	if depth_bound == 4:
-
 		static_eval_count += 1
 		return (game_state.static_evaluation(), None) 	# it is irrelevant what we return int second slot
+
 	elif game_state.current_player == 0:	# i.e is AI turn (max node)
 		bestmove = None
 		minimax_calls += 1
@@ -66,8 +66,8 @@ class Game:
 	def get_legal_moves(self, current_player):
 		""" Returns a list of of legal moves, as pairs of pairs e.g [((8,8),(5,8)),...] """
 		legal_moves = []
-		for row in range(self.board_size):
 
+		for row in range(self.board_size):
 			for col in range(self.board_size):
 
 				if self.board.repr[row][col] == self.player_symbol[current_player]:
@@ -85,8 +85,10 @@ class Game:
 					 		# now we are going to check for a double jump!
 					 		start = move[0]
 					 		cur_end   = move[1]
+
 					 		new_board = copy.deepcopy(self.board)	# Make a copy of the board, and then make the move on that board
 					 		new_board.movePiece(start,cur_end)
+
 					 		continue_move = move_fn(cur_end)		# Try to move again in the same direction
 					 		new_game_state = Game(self.board_size,new_board,current_player)			# make a whole new game state and check if our move is legal on that 
 
@@ -94,8 +96,10 @@ class Game:
 					 			start_cur = cur_end
 					 			cur_end = continue_move[1]
 					 			legal_moves.append((start,cur_end))
+
 						 		new_board = copy.deepcopy(new_board)
 					 			new_board.movePiece(start_cur,cur_end)
+
 					 			continue_move = move_fn(cur_end)
 					 			new_game_state = Game(new_game_state.board_size,new_board,current_player)
 		return legal_moves
@@ -141,6 +145,7 @@ class Game:
 		if len(self.get_legal_moves(self.current_player)) != 0:
 			computer_move = minimax(self, float("-inf"), float("inf"), 0)
 			computer_move = computer_move[1]
+
 			print("FROM BOARD:")
 			print(self.board)
 
@@ -148,12 +153,14 @@ class Game:
 				self.board.movePiece(computer_move[0], computer_move[1])
 				print(self.board)
 				print("Made move: ", ((computer_move[0][0]+1, computer_move[0][1]+1), (computer_move[1][0]+1, computer_move[1][1]+1)))
+
 				self.last_move_made = computer_move
 				self.current_player = 1 - self.current_player
 
 			else:
 				random_move =  random.choice(self.get_legal_moves(self.current_player))
 				self.board.movePiece(random_move[0], random_move[1])
+
 				print(self.board)
 				print("Made move: ", ((random_move[0][0]+1, random_move[0][1]+1), (random_move[1][0]+1, random_move[1][1]+1)))	# to present the computer's move nicely to player
 				
@@ -168,6 +175,7 @@ class Game:
 		if len(self.get_legal_moves(self.current_player)) != 0:
 			random_move =  random.choice(self.get_legal_moves(self.current_player))
 			self.board.movePiece(random_move[0], random_move[1])
+
 			print(self.board)
 			print("Made move: ", ((random_move[0][0]+1, random_move[0][1]+1), (random_move[1][0]+1, random_move[1][1]+1)))	# to present the computer's move nicely to player
 			
@@ -176,9 +184,6 @@ class Game:
 		else:
 			self.endgame = 1
 			print("Player", self.player_symbol[self.current_player], "loses!")
-
-	def random_move(self):
-		
 
 	@staticmethod
 	def north_move(pos):
