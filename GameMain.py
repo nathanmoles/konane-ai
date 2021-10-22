@@ -4,12 +4,12 @@ import random
 import time
 
 staticE = 0
-minimax_calls     = 0
+numCalls     = 0
 numBranches    = 0
 numCutoffs           = 0
 
 def minimax(game_state, alpha, beta, depth_bound):
-        global minimax_calls
+        global numCalls
         global numBranches
         global staticE
         global numCutoffs
@@ -18,7 +18,7 @@ def minimax(game_state, alpha, beta, depth_bound):
                 return (game_state.static_evaluation(), None) 	# it is irrelevant what we return int second slot
         elif game_state.current_player == 0:	# i.e is AI turn (max node)
                 bestmove = None
-                minimax_calls += 1
+                numCalls += 1
                 for successor_game_state in game_state.generate_successors():
                         numBranches += 1
                         # player_move just gets discarded
@@ -32,7 +32,7 @@ def minimax(game_state, alpha, beta, depth_bound):
                 return (alpha, bestmove)
         else: 	# i.e looking at player turn (min node)
                 bestmove = None
-                minimax_calls += 1
+                numCalls += 1
                 for successor_game_state in game_state.generate_successors():
                         numBranches += 1
                         # computer_move is not relevant, we just need to return both for later
@@ -66,7 +66,7 @@ class Game:
                 legal_moves = []
                 for row in range(self.board_size):
                         for col in range(self.board_size):
-                                if self.board.repr[row][col] == self.player_symbol[current_player]:
+                                if self.board.board1[row][col] == self.player_symbol[current_player]:
                                         position  = (row,col)
                                         move_fn_list = [self.north_move,
                                                                  self.east_move,
@@ -105,14 +105,14 @@ class Game:
                 ending_pos   = move[1]
                 if ending_pos[0] not in range(self.board_size) or ending_pos[1] not in range(self.board_size):	# Discard any generated moves that fall off of the board
                         return False
-                if self.board.repr[starting_pos[0]][starting_pos[1]]!=self.player_symbol[current_player]:
+                if self.board.board1[starting_pos[0]][starting_pos[1]]!=self.player_symbol[current_player]:
                         print "this should never trigger and is redundant"
                         return False
-                if self.board.repr[ending_pos[0]][ending_pos[1]]!= '.':	# Check that landing spot is empty
+                if self.board.board1[ending_pos[0]][ending_pos[1]]!= '.':	# Check that landing spot is empty
                         return False
                 middle_pos = (starting_pos[0]-(starting_pos[0]-ending_pos[0])/2,starting_pos[1]-(starting_pos[1]-ending_pos[1])/2)	# Check the middle spot is the other piece - this should in theory not matter because the pieces alternate
                 other_player = 1 - current_player
-                if self.board.repr[middle_pos[0]][middle_pos[1]] != self.player_symbol[other_player]:
+                if self.board.board1[middle_pos[0]][middle_pos[1]] != self.player_symbol[other_player]:
                         return False
                 return True
 
@@ -135,7 +135,7 @@ class Game:
                                 is_valid_input = False
                                 while is_valid_input == False:
                                         move_coordinates = (input("Please enter start coordinate: "), input("Please enter end coordinate: "))	# should be two tuples entered
-                                        actual_move_coordinates = ((move_coordinates[0][0]-1, move_coordinates[0][1]-1), (move_coordinates[1][0]-1, move_coordinates[1][1]-1))	# to convert user input (which is 1 indexed) to 0 indexed (which our board representation is in)
+                                        actual_move_coordinates = ((move_coordinates[0][0]-1, move_coordinates[0][1]-1), (move_coordinates[1][0]-1, move_coordinates[1][1]-1))	# to convert user input (which is 1 indexed) to 0 indexed (which our board board1esentation is in)
                                         is_valid_input =  actual_move_coordinates in legal_moves
                                 self.board.movePiece(actual_move_coordinates[0], actual_move_coordinates[1])
                                 print(self.board)
@@ -156,7 +156,7 @@ class Game:
 
 
         def computer_turn(self):
-                global minimax_calls
+                global numCalls
                 if len(self.get_legal_moves(self.current_player)) != 0:
                         computer_move = minimax(self, float("-inf"), float("inf"), 0)
                         computer_move = computer_move[1]
@@ -237,5 +237,5 @@ def test_game(game_state):
 if __name__ == '__main__':
         test_game(Game(8,Board(8)))
         print "Static Evals: ", staticE
-        print "Average Branching Factor: ", numBranches/(minimax_calls+0.0)
+        print "Average Branching Factor: ", numBranches/(numCalls+0.0)
         print "Number of Cutoff: ", numCutoffs
