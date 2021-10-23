@@ -181,41 +181,14 @@ class Game:
 				print (s.board)
 		return successors
 
-	def alphabeta_turn(self):
+	def minimax_turn(self, isAlphaBeta):
 		global num_calls
 
 		if len(self.get_legal_moves(self.current_player)) != 0:
-			computer_move = alphabeta(self, float("-inf"), float("inf"), 0)
-			computer_move = computer_move[1]
-
-			print("FROM BOARD:")
-			print(self.board)
-
-			if computer_move is not None:
-				self.board.movePiece(computer_move[0], computer_move[1])
-				
-				print(self.board)
-
-				self.last_move_made = computer_move
-				self.current_player = 1 - self.current_player
-
+			if (isAlphaBeta):
+				computer_move = alphabeta(self,  0)
 			else:
-				random_move =  random.choice(self.get_legal_moves(self.current_player))
-				self.board.movePiece(random_move[0], random_move[1])
-
-				print(self.board)
-
-				self.last_move_made = computer_move
-				self.current_player = 1 - self.current_player
-		else:
-			self.endgame = 1
-			print("Player", self.player_symbol[self.current_player], "loses!")
-
-	def minimax_turn(self):
-		global num_calls
-
-		if len(self.get_legal_moves(self.current_player)) != 0:
-			computer_move = minimax(self,  0)
+				computer_move = minimax(self,  0)
 			computer_move = computer_move[1]
 
 			print("FROM BOARD:")
@@ -298,7 +271,7 @@ def test_game(game_state):
 
 	while game_state.endgame != 1:
 		if game_state.current_player == 0:
-			game_state.alphabeta_turn()
+			game_state.minimax_turn(False)
 		else:
 			game_state.random_turn()
 
