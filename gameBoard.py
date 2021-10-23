@@ -21,21 +21,21 @@ class Board:
 	def movePiece(self, from_pos, to_pos):		# Assuming from_pos and to_pos are coordinate tuples
 		""" Modifies the game board when moving pieces """
 		moved_piece = self.repr[from_pos[0]][from_pos[1]]	# Saves the type of the piece we are moving (whether it is "X" or "O")
-                self.repr[from_pos[0]][from_pos[1]] = "."
+                self.repr[from_pos[0]][from_pos[1]] = " "
 
 		x_range = sorted([from_pos[0], to_pos[0]+1])
 		y_range = sorted([from_pos[1], to_pos[1]+1])
 		for x in range(*x_range):		# In order to iterate between the values of the from and to positions
 			for y in range(*y_range):
 				# Deletes every piece between the moving piece's starting and ending positions
-                                self.repr[x][y] = "."
+                                self.repr[x][y] = " "
 		self.repr[to_pos[0]][to_pos[1]] = moved_piece	# Places the piece in it's final position
 
 
 
 	def removePiece(self, pos):		# pos should be a coordinate tuple
 		""" Modifies the board by removing a piece at specified coordinate """
-                self.repr[pos[0]][pos[1]] = "."
+                self.repr[pos[0]][pos[1]] = " "
 
 
 	def __str__(self):

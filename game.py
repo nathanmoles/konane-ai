@@ -5,24 +5,23 @@ import time
 import sys
 
 static_eval_count = 0
-alphabeta_calls = 0
-minimax_calls = 0
+num_calls = 0
 total_branches = 0
 cutoffs = 0
 
 def minimax(game_state, depth_bound):
-	global minimax_calls
+	global num_calls
 	global total_branches
 	global static_eval_count
 	global cutoffs
 
-	if depth_bound == 3:
+	if depth_bound == 1:
 		static_eval_count += 1
 		return (game_state.static_evaluation(), None) 	# it is irrelevant what we return int second slot
 		
 	if game_state.current_player == 0:	# i.e is AI turn (max node)
 		bestmove = None
-		minimax_calls += 1
+		num_calls += 1
 		value = float('-inf')
 
 		for successor_game_state in game_state.generate_successors():
@@ -36,7 +35,7 @@ def minimax(game_state, depth_bound):
 		return (value, bestmove)
 	else: 	# i.e looking at player turn (min node)
 		bestmove = None
-		minimax_calls += 1
+		num_calls += 1
 
 		value = float('inf')
 
@@ -54,18 +53,18 @@ def minimax(game_state, depth_bound):
 
 
 def alphabeta(game_state, alpha, beta, depth_bound):
-	global alphabeta_calls
+	global num_calls
 	global total_branches
 	global static_eval_count
 	global cutoffs
 
-	if depth_bound == 4:
+	if depth_bound == 3:
 		static_eval_count += 1
 		return (game_state.static_evaluation(), None) 	# it is irrelevant what we return int second slot
 		
 	elif game_state.current_player == 0:	# i.e is AI turn (max node)
 		bestmove = None
-		alphabeta_calls += 1
+		num_calls += 1
 
 		for successor_game_state in game_state.generate_successors():
 			total_branches += 1
@@ -83,7 +82,7 @@ def alphabeta(game_state, alpha, beta, depth_bound):
 		return (alpha, bestmove)
 	else: 	# i.e looking at player turn (min node)
 		bestmove = None
-		alphabeta_calls += 1
+		num_calls += 1
 
 		for successor_game_state in game_state.generate_successors():
 			total_branches += 1
@@ -159,7 +158,7 @@ class Game:
 			print ("this should never trigger and is redundant")
 			return False
 
-		if self.board.repr[ending_pos[0]][ending_pos[1]]!= '.':	# Check that landing spot is empty
+		if self.board.repr[ending_pos[0]][ending_pos[1]]!= ' ':	# Check that landing spot is empty
 			return False
 
 		middle_pos = (starting_pos[0]-(starting_pos[0]-ending_pos[0])/2,starting_pos[1]-(starting_pos[1]-ending_pos[1])/2)	# Check the middle spot is the other piece - this should in theory not matter because the pieces alternate
@@ -183,7 +182,7 @@ class Game:
 		return successors
 
 	def alphabeta_turn(self):
-		global alphabeta_calls
+		global num_calls
 
 		if len(self.get_legal_moves(self.current_player)) != 0:
 			computer_move = alphabeta(self, float("-inf"), float("inf"), 0)
@@ -213,7 +212,7 @@ class Game:
 			print("Player", self.player_symbol[self.current_player], "loses!")
 
 	def minimax_turn(self):
-		global minimax_calls
+		global num_calls
 
 		if len(self.get_legal_moves(self.current_player)) != 0:
 			computer_move = minimax(self,  0)
@@ -299,7 +298,7 @@ def test_game(game_state):
 
 	while game_state.endgame != 1:
 		if game_state.current_player == 0:
-			game_state.minimax_turn()
+			game_state.alphabeta_turn()
 		else:
 			game_state.random_turn()
 
@@ -309,5 +308,5 @@ if __name__ == '__main__':
 	test_game(Game(8,Board(8)))
 	print("GAME TOOK", time.time() - start, "SECONDS")
 	print("NUM STATIC EVALS:", static_eval_count)
-	print("AVG BRANCHING FACTOR:", total_branches/(minimax_calls+0.0))
+	print("AVG BRANCHING FACTOR:", total_branches/(num_calls+0.0))
 	print("NUM CUTOFFS", cutoffs)
