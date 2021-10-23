@@ -15,7 +15,7 @@ def minimax(game_state, depth_bound):
 	global static_eval_count
 	global cutoffs
 
-	if depth_bound == 1:
+	if depth_bound == 3:
 		static_eval_count += 1
 		return (game_state.static_evaluation(), None) 	# it is irrelevant what we return int second slot
 		
@@ -58,7 +58,7 @@ def alphabeta(game_state, alpha, beta, depth_bound):
 	global static_eval_count
 	global cutoffs
 
-	if depth_bound == 3:
+	if depth_bound == 1:
 		static_eval_count += 1
 		return (game_state.static_evaluation(), None) 	# it is irrelevant what we return int second slot
 		
@@ -186,7 +186,7 @@ class Game:
 
 		if len(self.get_legal_moves(self.current_player)) != 0:
 			if (isAlphaBeta):
-				computer_move = alphabeta(self,  0)
+				computer_move = alphabeta(self, float("-inf"), float("inf"), 0)
 			else:
 				computer_move = minimax(self,  0)
 			computer_move = computer_move[1]
