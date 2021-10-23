@@ -17,31 +17,31 @@ def minimax(game_state, depth_bound):
 
 	if depth_bound == 1:
 		static_eval_count += 1
-		return (game_state.static_evaluation(), None) 	# it is irrelevant what we return int second slot
+                return (game_state.static_evaluation(), None) 	# Node evaluation
 		
-	if game_state.current_player == 0:	# i.e is AI turn (max node)
+        if game_state.current_player == 0:	# max function
 		bestmove = None
 		num_calls += 1
 		value = float('-inf')
 
 		for successor_game_state in game_state.generate_successors():
-			total_branches += 1
-			# player_move just gets discarded
+                        total_branches += 1
+
 			newVal, move = minimax(successor_game_state, depth_bound+1)
 			
 			if newVal > value:
 				value = newVal
 				bestmove = successor_game_state.last_move_made
 		return (value, bestmove)
-	else: 	# i.e looking at player turn (min node)
+        else: 	# min function
 		bestmove = None
 		num_calls += 1
 
 		value = float('inf')
 
 		for successor_game_state in game_state.generate_successors():
-			total_branches += 1
-			# player_move just gets discarded
+                        total_branches += 1
+
 			newVal, move = minimax(successor_game_state, depth_bound+1)
 			
 			if newVal < value:
@@ -58,17 +58,18 @@ def alphabeta(game_state, alpha, beta, depth_bound):
 	global static_eval_count
 	global cutoffs
 
-	if depth_bound == 3:
+        if depth_bound == 3: # hit max depth
 		static_eval_count += 1
-		return (game_state.static_evaluation(), None) 	# it is irrelevant what we return int second slot
+                return (game_state.static_evaluation(), None) 	# Evaluation of the leaf node
 		
-	elif game_state.current_player == 0:	# i.e is AI turn (max node)
+        elif game_state.current_player == 0:	# Max function
 		bestmove = None
 		num_calls += 1
 
 		for successor_game_state in game_state.generate_successors():
-			total_branches += 1
-			# player_move just gets discarded
+                        total_branches += 1
+
+
 			bv, player_move = alphabeta(successor_game_state, alpha, beta, depth_bound+1)
 			
 			if alpha >= beta:
@@ -80,13 +81,13 @@ def alphabeta(game_state, alpha, beta, depth_bound):
 				bestmove = successor_game_state.last_move_made
 
 		return (alpha, bestmove)
-	else: 	# i.e looking at player turn (min node)
+        else: 	# Min function
 		bestmove = None
 		num_calls += 1
 
 		for successor_game_state in game_state.generate_successors():
 			total_branches += 1
-			# computer_move is not relevant, we just need to return both for later
+
 			bv, computer_move = alphabeta(successor_game_state, alpha, beta, depth_bound+1)
 
 			if beta <= alpha:
@@ -109,7 +110,7 @@ class Game:
 		self.endgame = 0
 
 	def get_legal_moves(self, current_player):
-		""" Returns a list of of legal moves, as pairs of pairs e.g [((8,8),(5,8)),...] """
+                """ Gets list of moves possible in state"""
 		legal_moves = []
 
 		for row in range(self.board_size):
@@ -124,15 +125,18 @@ class Game:
 
 						if self.is_legal_move(current_player,move):
 					 		legal_moves.append(move)
-					 		# now we are going to check for a double jump!
-					 		start = move[0]
+
+                                                        start = move[0]
 					 		cur_end   = move[1]
 
-					 		new_board = copy.deepcopy(self.board)	# Make a copy of the board, and then make the move on that board
+                                                        new_board = copy.deepcopy(self.board)
+
+                                                        # Checking double jump possibility
+
 					 		new_board.movePiece(start,cur_end)
 
-					 		continue_move = move_fn(cur_end)		# Try to move again in the same direction
-					 		new_game_state = Game(self.board_size,new_board,current_player)			# make a whole new game state and check if our move is legal on that 
+                                                        continue_move = move_fn(cur_end)
+                                                        new_game_state = Game(self.board_size,new_board,current_player)
 
 					 		while(new_game_state.is_legal_move(current_player, continue_move)):
 					 			start_cur = cur_end
@@ -147,28 +151,29 @@ class Game:
 		return legal_moves
 
 	def is_legal_move(self, current_player, move):
-		""" Given a move e.g ((8,8),(5,8)), check if that is legal, return true if it is, false otherwise """
+                """ Checking if move is possible """
 		starting_pos = move[0]
 		ending_pos   = move[1]
 
-		if ending_pos[0] not in range(self.board_size) or ending_pos[1] not in range(self.board_size):	# Discard any generated moves that fall off of the board
+                #testing end range
+                if ending_pos[0] not in range(self.board_size) or ending_pos[1] not in range(self.board_size):
 			return False 
 
-		if self.board.repr[starting_pos[0]][starting_pos[1]]!=self.player_symbol[current_player]:
-			print ("this should never trigger and is redundant")
+                if self.board.repr[starting_pos[0]][starting_pos[1]]!=self.player_symbol[current_player]:
 			return False
 
-		if self.board.repr[ending_pos[0]][ending_pos[1]]!= ' ':	# Check that landing spot is empty
+                # Making sure spot moved to is empty
+                if self.board.repr[ending_pos[0]][ending_pos[1]]!= ' ':
 			return False
 
-		middle_pos = (starting_pos[0]-(starting_pos[0]-ending_pos[0])/2,starting_pos[1]-(starting_pos[1]-ending_pos[1])/2)	# Check the middle spot is the other piece - this should in theory not matter because the pieces alternate
+                middle_pos = (starting_pos[0]-(starting_pos[0]-ending_pos[0])/2,starting_pos[1]-(starting_pos[1]-ending_pos[1])/2)
 		other_player = 1 - current_player 
 
 		if self.board.repr[middle_pos[0]][middle_pos[1]] != self.player_symbol[other_player]:
 			return False 
 		return True
 
-	def generate_successors(self):
+        def generate_successors(self): # generating possible states
 		successors = []
 
 		for move in self.get_legal_moves(self.current_player):
@@ -181,7 +186,7 @@ class Game:
 				print (s.board)
 		return successors
 
-	def minimax_turn(self, isAlphaBeta):
+        def minimax_turn(self, isAlphaBeta):# doing minimax Algo
 		global num_calls
 
 		if len(self.get_legal_moves(self.current_player)) != 0:
@@ -191,7 +196,6 @@ class Game:
 				computer_move = minimax(self,  0)
 			computer_move = computer_move[1]
 
-			print("FROM BOARD:")
 			print(self.board)
 
 			if computer_move is not None:
@@ -214,7 +218,7 @@ class Game:
 			self.endgame = 1
 			print("Player", self.player_symbol[self.current_player], "loses!")
 
-	def random_turn(self):
+        def random_turn(self): # random agent algo
 		if len(self.get_legal_moves(self.current_player)) != 0:
 			random_move =  random.choice(self.get_legal_moves(self.current_player))
 			self.board.movePiece(random_move[0], random_move[1])
@@ -227,6 +231,7 @@ class Game:
 			self.endgame = 1
 			print("Player", self.player_symbol[self.current_player], "loses!")
 
+        # Piece moving methods
 	@staticmethod
 	def north_move(pos):
 		return (pos,(pos[0]-2,pos[1]))
@@ -247,8 +252,9 @@ class Game:
 	def west_move(pos):
 		return (pos,(pos[0],pos[1]-2))
 
-	def static_evaluation(self):
 
+	def static_evaluation(self):
+                # evaluating the possible moves
 
 		my_moves = self.get_legal_moves(0)
 
@@ -260,6 +266,7 @@ class Game:
 		if my_moves == 0:
 			return float("-inf")
 
+                #returning the difference in length of moves so that biggest difference is chosen
 		return len(my_moves) - len(opponent_moves)
 
 def test_game(game_state):
@@ -277,9 +284,8 @@ def test_game(game_state):
 
 
 if __name__ == '__main__':
-	start = time.time()
-	test_game(Game(8,Board(8)))
-	print("GAME TOOK", time.time() - start, "SECONDS")
-	print("NUM STATIC EVALS:", static_eval_count)
-	print("AVG BRANCHING FACTOR:", total_branches/(num_calls+0.0))
-	print("NUM CUTOFFS", cutoffs)
+
+        test_game(Game(8,Board(8))) #running game
+        print("Static Evals: ", static_eval_count)
+        print("Branching Factor: ", total_branches/(num_calls+0.0))
+        print("Cutoffs: ", cutoffs)
