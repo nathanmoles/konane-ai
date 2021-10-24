@@ -1,59 +1,57 @@
-class Board:
-	def __init__(self, size):
-		print("starting game")
+class GameBoard:
+    def __init__(self, size):
+        print("starting game")
+        self.positionList = []
+        self.index = [i for i in range(1, size + 1)]
+        cur = 0
 
-                self.columnIndex = [x for x in range(1, size+1)] # Numbering Columns
-		self.repr = []
-		cur = 0
+        for i in range(size):
+            self.positionList.append([])
+        
+        # Filling board
+        for i in range(size):
+            for j in range(size):
+                cur = 0
+                cur = (i + j) %2
 
-
-                for i in range(size):	# Rows Added
-			self.repr.append([])
-                # Filling board
-		for i in range(size):
-			for j in range(size):
-				cur = 0
-				cur = (i+j)%2
-				if cur == 0:
-					self.repr[i].append("B")
-				else:
-					self.repr[i].append("W")
-
-
-        def movePiece(self, from_pos, to_pos):
-                """ function moves pieces on board """
-                moved_piece = self.repr[from_pos[0]][from_pos[1]]	# Saves color of piece
-                self.repr[from_pos[0]][from_pos[1]] = " "
-
-		x_range = sorted([from_pos[0], to_pos[0]+1])
-		y_range = sorted([from_pos[1], to_pos[1]+1])
-		for x in range(*x_range):		# In order to iterate between the values of the from and to positions
-			for y in range(*y_range):
-                                # Removes pieces when jumped
-                                self.repr[x][y] = " "
-                self.repr[to_pos[0]][to_pos[1]] = moved_piece
+                if cur == 0:
+                    self.positionList[i].append("B")
+                else:
+                    self.positionList[i].append("W")
 
 
+    def movePiece(self, initPos, endPos):
+        """ function moves pieces on board """
+        pieceMoved = self.positionList[initPos[0]][initPos[1]]
+        self.positionList[initPos[0]][initPos[1]] = " "
 
-        def removePiece(self, pos):
-                """ Removes pieces at position """
-                self.repr[pos[0]][pos[1]] = " "
+        rangeX = sorted([initPos[0], endPos[0]+1])
+        rangeY = sorted([initPos[1], endPos[1]+1])
+        
+        for i in range(*rangeX):	
+            for j in range(*rangeY):
+                self.positionList[i][j] = " "
+
+        self.positionList[endPos[0]][endPos[1]] = pieceMoved
 
 
-	def __str__(self):
-		""" Prints the board """
-		display = "  "
+    def __str__(self):
+        """ Prints the board """
+        boardPrint = "  "
 
-		for number in self.columnIndex:
-			display += str(number)+" "		# Adds column numbers
-		display += "\n"
-		rowNumber = 1
+        for num in self.index:
+            boardPrint = boardPrint + str(num) + " "
 
-		for row in self.repr:
-			display += str(rowNumber)+" "	# Adds row numbers
+        rowNum = 1
+        boardPrint = boardPrint + "\n"
 
-			for piece in row:
-				display += piece+" "
-			display += "\n"
-			rowNumber += 1
-		return display
+        for rows in self.positionList:
+            boardPrint = boardPrint + str(rowNum) + " "
+
+            for r in rows:
+                boardPrint = boardPrint + r + " "
+
+            rowNum = rowNum + 1
+            boardPrint = boardPrint + "\n"
+
+        return boardPrint
