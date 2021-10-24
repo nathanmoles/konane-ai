@@ -18,7 +18,7 @@ def minimax(stateGame, depth):
         staticNum += 1
         return (stateGame.evalStatic(), None)
         
-    elif stateGame.curAgent == 0:	# max function
+    elif stateGame.curAgent == 0:
         numCalls += 1
         bestmove = None
         score = float('-inf')
@@ -58,9 +58,9 @@ def alphabeta(stateGame, alpha, beta, depth):
 
     if depth == 3:
         staticNum += 1
-        return (stateGame.evalStatic(), None) 	# Evaluation of the leaf node
+        return (stateGame.evalStatic(), None)
         
-    elif stateGame.curAgent == 0:	# Max function
+    elif stateGame.curAgent == 0:
         bestmove = None
         numCalls += 1
 
@@ -77,7 +77,7 @@ def alphabeta(stateGame, alpha, beta, depth):
                 bestmove = succState.prevMove
 
         return (alpha, bestmove)
-    else: 	# Min function
+    else: 
         bestmove = None
         numCalls += 1
 
@@ -117,7 +117,7 @@ class Konane:
             self.endgame = 1
             print ("%s Lost" %(self.agentChar[self.curAgent]))
 
-    def minimaxMove(self, isAlphaBeta):# doing minimax Algo
+    def minimaxMove(self, isAlphaBeta):
         global numCalls
 
         if len(self.getPossibleMoves(self.curAgent)) != 0:
@@ -242,13 +242,12 @@ def runGame(stateGame):
 
         if stateGame.curAgent == 0:
             stateGame.randomMove()
-
         else:
             stateGame.minimaxMove(True)
 
 
 if __name__ == '__main__':
-    runGame(Konane(GameBoard(8), 8)) #running game
+    runGame(Konane(GameBoard(8), 8))
 
     print("Branching Factor Num: %f" % (branchingNum/(numCalls+0.0)))
     print("Cutoff Num: %d" % (numCutoffs))

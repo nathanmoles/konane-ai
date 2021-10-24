@@ -21,7 +21,6 @@ class GameBoard:
 
 
     def movePiece(self, initPos, endPos):
-        """ function moves pieces on board """
         pieceMoved = self.positionList[initPos[0]][initPos[1]]
         self.positionList[initPos[0]][initPos[1]] = " "
 
@@ -36,7 +35,6 @@ class GameBoard:
 
 
     def __str__(self):
-        """ Prints the board """
         boardPrint = "  "
 
         for num in self.index:
