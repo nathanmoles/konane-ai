@@ -1,3 +1,5 @@
+Play Konanae vs AI algorithm
+
 RUN INSTRUCTION:
 - go into the prject directory in terminal
 - run command: python konane.py
