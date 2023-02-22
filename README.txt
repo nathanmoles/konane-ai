@@ -1,4 +1,4 @@
-Play Konanae vs AI algorithm
+Play Konanae vs AI that uses a minimax algorithm (with optional alphabeta pruning).
 
 RUN INSTRUCTION:
 - go into the prject directory in terminal
